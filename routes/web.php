@@ -148,6 +148,14 @@ Route::middleware(['auth'])->group(function () {
              ->name('admin.packages.update');
         Route::delete('/packages/{package}', [\App\Http\Controllers\Admin\PackageController::class, 'destroy'])
              ->name('admin.packages.destroy');
+
+        // ==================== USER MANAGEMENT oleh Admin ==================== //
+        Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])
+             ->name('admin.users.index');
+        Route::patch('/users/{user}/role', [\App\Http\Controllers\Admin\UserController::class, 'updateRole'])
+             ->name('admin.users.update-role');
+        Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])
+             ->name('admin.users.destroy');
     });
 });
 

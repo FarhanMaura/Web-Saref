@@ -11,35 +11,61 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Create admin user
-        User::create([
-            'name' => 'Admin Wedding',
-            'email' => 'admin@weddingcreator.com',
-            'password' => Hash::make('password123'),
-            'email_verified_at' => now(),
-        ]);
+        // Update or create admin user with main_admin role
+        User::updateOrCreate(
+            ['email' => 'admin@weddingcreator.com'],
+            [
+                'name' => 'Admin Wedding',
+                'password' => Hash::make('password123'),
+                'role' => 'main_admin', // Tambahkan ini
+                'email_verified_at' => now(),
+            ]
+        );
 
-        // Create regular user
-        User::create([
-            'name' => 'Customer Test',
-            'email' => 'customer@test.com',
-            'password' => Hash::make('password123'),
-            'email_verified_at' => now(),
-        ]);
+        // Update or create regular user
+        User::updateOrCreate(
+            ['email' => 'customer@test.com'],
+            [
+                'name' => 'Customer Test',
+                'password' => Hash::make('password123'),
+                'role' => 'user', // Tambahkan ini
+                'email_verified_at' => now(),
+            ]
+        );
 
-        // Create few more test users
-        User::create([
-            'name' => 'Budi Santoso',
-            'email' => 'budi@test.com',
-            'password' => Hash::make('password123'),
-            'email_verified_at' => now(),
-        ]);
+        // Update existing users to have 'user' role if role is null
+        User::whereNull('role')->update(['role' => 'user']);
 
-        User::create([
-            'name' => 'Sari Dewi',
-            'email' => 'sari@test.com',
-            'password' => Hash::make('password123'),
-            'email_verified_at' => now(),
-        ]);
+        // Create few more test users dengan role
+        $testUsers = [
+            [
+                'name' => 'Budi Santoso',
+                'email' => 'budi@test.com',
+                'password' => Hash::make('password123'),
+                'role' => 'user',
+                'email_verified_at' => now(),
+            ],
+            [
+                'name' => 'Sari Dewi',
+                'email' => 'sari@test.com',
+                'password' => Hash::make('password123'),
+                'role' => 'user',
+                'email_verified_at' => now(),
+            ],
+            [
+                'name' => 'Manager Event',
+                'email' => 'manager@test.com',
+                'password' => Hash::make('password123'),
+                'role' => 'admin', // Admin biasa
+                'email_verified_at' => now(),
+            ]
+        ];
+
+        foreach ($testUsers as $userData) {
+            User::updateOrCreate(
+                ['email' => $userData['email']],
+                $userData
+            );
+        }
     }
 }
