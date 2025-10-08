@@ -86,7 +86,7 @@
 
                 <div class="text-center">
                     <a href="{{ url('/') }}" class="text-sm text-gray-600 hover:text-gray-900">
-                        ← Kembali ke beranda
+                        ← Kembali ke Home
                     </a>
                 </div>
             </form>
