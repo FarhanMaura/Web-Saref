@@ -6,7 +6,14 @@ use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+// Redirect root based on authentication and role
 Route::get('/', function () {
+    if (Auth::check()) {
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('dashboard');
+    }
     return view('welcome');
 });
 
@@ -52,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
             ));
         })->name('admin.dashboard');
 
-        // Statistics (halaman baru untuk grafik)
+        // Statistics (halaman baru untuk grafik) - UPDATE DARI DOSEN
         Route::get('/statistics', function () {
             if (!Auth::user()->isAdmin()) {
                 return redirect()->route('dashboard')->with('error', 'Akses ditolak.');
@@ -62,31 +69,32 @@ Route::middleware(['auth'])->group(function () {
             $totalPackages = \App\Models\Package::count();
             $totalUsers = \App\Models\User::count();
 
-            // Menghitung total pendapatan dari order yang sudah dibayar
-            $totalRevenue = \App\Models\Order::where('payment_status', 'paid')
+            // Calculate total revenue from COMPLETED AND PAID orders only
+            $totalRevenue = \App\Models\Order::where('status', 'completed')
+                ->where('payment_status', 'paid')
                 ->with('package')
                 ->get()
                 ->sum(function($order) {
                     return $order->package->price;
                 });
 
-            // Mendapatkan tahun dan bulan yang dipilih atau nilai default
+            // Get selected year and month or current
             $selectedYear = request('year', date('Y'));
             $selectedMonth = request('month', date('n'));
 
-            // Menghitung data mingguan untuk bulan dan tahun yang dipilih
+            // Calculate weekly data for selected month and year - ONLY COMPLETED & PAID ORDERS
             $weeklyData = [];
 
             for ($week = 1; $week <= 4; $week++) {
-                // Menghitung tanggal mulai dan akhir untuk setiap minggu
                 $startDay = ($week - 1) * 7 + 1;
                 $endDay = min($week * 7, cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear));
 
                 $startDate = $selectedYear . '-' . str_pad($selectedMonth, 2, '0', STR_PAD_LEFT) . '-' . str_pad($startDay, 2, '0', STR_PAD_LEFT);
                 $endDate = $selectedYear . '-' . str_pad($selectedMonth, 2, '0', STR_PAD_LEFT) . '-' . str_pad($endDay, 2, '0', STR_PAD_LEFT);
 
-                // Menghitung jumlah order yang dibuat pada minggu ini
-                $weekOrders = \App\Models\Order::whereDate('created_at', '>=', $startDate)
+                $weekOrders = \App\Models\Order::where('status', 'completed')
+                    ->where('payment_status', 'paid')
+                    ->whereDate('created_at', '>=', $startDate)
                     ->whereDate('created_at', '<=', $endDate)
                     ->count();
 

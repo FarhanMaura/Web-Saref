@@ -5,11 +5,26 @@
         </h2>
     </x-slot>
 
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!-- Info Box -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-blue-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-blue-700 text-sm">
+                    <strong>Info:</strong> Statistik hanya menampilkan pesanan dengan status <span class="font-semibold">Completed</span>
+                    dan pembayaran <span class="font-semibold">Lunas</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <!-- Total Orders Card -->
+                <!-- Total Completed & Paid Orders Card -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
@@ -19,8 +34,10 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">Total Pesanan</p>
-                                <p class="text-2xl font-semibold text-gray-900">{{ $totalOrders }}</p>
+                                <p class="text-sm font-medium text-gray-500">Pesanan Selesai & Lunas</p>
+                                <p class="text-2xl font-semibold text-gray-900">
+                                    {{ \App\Models\Order::where('status', 'completed')->where('payment_status', 'paid')->count() }}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -201,7 +218,7 @@
                 data: {
                     labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
                     datasets: [{
-                        label: 'Jumlah Pesanan',
+                        label: 'Jumlah Pesanan (Selesai & Lunas)',
                         data: [
                             weekData[1] || 0,
                             weekData[2] || 0,
