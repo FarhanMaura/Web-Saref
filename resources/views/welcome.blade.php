@@ -244,7 +244,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="font-playfair text-4xl font-bold text-gray-900 mb-8">Tentang Kami</h2>
             <p class="text-xl text-gray-600 leading-relaxed mb-8">
-                WeddingCreator adalah tim profesional yang berdedikasi untuk mengabadikan momen-momen terindah
+                RJ Visual Stories adalah tim profesional yang berdedikasi untuk mengabadikan momen-momen terindah
                 dalam hidup Anda. Dengan pengalaman lebih dari 5 tahun dalam industri wedding photography,
                 kami memahami betapa berharganya setiap detik dalam pernikahan Anda.
             </p>
@@ -294,7 +294,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="font-playfair text-2xl font-bold mb-4">WeddingCreator</h3>
+                    <h3 class="font-playfair text-2xl font-bold mb-4">RJ VISUAL STORIES Wedding Creator</h3>
                     <p class="text-gray-400">Mengabadikan momen terindah pernikahan Anda dengan penuh cinta dan profesionalisme.</p>
                 </div>
                 <div>
@@ -308,22 +308,20 @@
                 <div>
                     <h4 class="font-semibold mb-4">Kontak</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li>Email: hello@weddingcreator.com</li>
                         <li>Phone: +62 812-3456-7890</li>
-                        <li>Alamat: Jakarta, Indonesia</li>
+                        <li>Alamat: KayuAgung, Palembang</li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-4">Follow Kami</h4>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
-                        <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
-                        <a href="#" class="text-gray-400 hover:text-white">TikTok</a>
+                        <a href="https://www.instagram.com/rj.visualstories?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="text-gray-400 hover:text-white">Instagram</a>
+                        <a href="https://www.tiktok.com/@rj.visualstories?_t=ZS-90Rl9oqFFEg&_r=1" class="text-gray-400 hover:text-white">TikTok</a>
                     </div>
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 WeddingCreator. All rights reserved.</p>
+                <p>&copy; 2025 WeddingCreator. All rights reserved.</p>
             </div>
         </div>
     </footer>
