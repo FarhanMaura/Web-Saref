@@ -28,8 +28,14 @@ Route::get('/home', function () {
     return redirect('/');
 });
 
-// Dashboard untuk user biasa
+// Dashboard untuk user biasa - MODIFIED: Admin tidak bisa akses
 Route::get('/dashboard', function () {
+    // Jika user adalah admin, redirect ke admin dashboard
+    if (Auth::user()->isAdmin()) {
+        return redirect()->route('admin.dashboard')->with('info', 'Admin diarahkan ke dashboard admin.');
+    }
+
+    // Jika user biasa, tampilkan dashboard user
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -41,13 +47,35 @@ Route::get('/packages/{package}', [PackageController::class, 'show'])->name('pac
 // ==================== AUTHENTICATED USER ROUTES ==================== //
 Route::middleware(['auth'])->group(function () {
 
-    // Orders
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/create/{package}', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    // Orders - MODIFIED: Hanya user biasa yang bisa akses
+    Route::get('/orders', function () {
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Admin tidak dapat mengakses halaman orders user.');
+        }
+        return app(OrderController::class)->index();
+    })->name('orders.index');
 
-    // Reviews (user dapat memberikan review)
-    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/orders/create/{package}', function ($package) {
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Admin tidak dapat membuat pesanan.');
+        }
+        return app(OrderController::class)->create($package);
+    })->name('orders.create');
+
+    Route::post('/orders', function () {
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Admin tidak dapat membuat pesanan.');
+        }
+        return app(OrderController::class)->store(request());
+    })->name('orders.store');
+
+    // Reviews (user dapat memberikan review) - MODIFIED: Hanya user biasa
+    Route::post('/reviews', function () {
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Admin tidak dapat memberikan review.');
+        }
+        return app(ReviewController::class)->store(request());
+    })->name('reviews.store');
 
     // ==================== ADMIN ROUTES ==================== //
     Route::prefix('admin')->group(function () {
