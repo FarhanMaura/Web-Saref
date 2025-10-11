@@ -55,13 +55,23 @@ Route::middleware(['auth'])->group(function () {
         return app(OrderController::class)->index();
     })->name('orders.index');
 
-    Route::get('/orders/create/{package}', function ($package) {
+    // FIXED: orders.create - cari package by ID dulu
+    Route::get('/orders/create/{package}', function ($packageId) {
         if (Auth::user()->isAdmin()) {
             return redirect()->route('admin.dashboard')->with('error', 'Admin tidak dapat membuat pesanan.');
         }
+
+        // Cari package by ID
+        $package = \App\Models\Package::find($packageId);
+
+        if (!$package) {
+            return redirect()->route('packages.index')->with('error', 'Paket tidak ditemukan.');
+        }
+
         return app(OrderController::class)->create($package);
     })->name('orders.create');
 
+    // FIXED: orders.store - pass request object dengan benar
     Route::post('/orders', function () {
         if (Auth::user()->isAdmin()) {
             return redirect()->route('admin.dashboard')->with('error', 'Admin tidak dapat membuat pesanan.');
