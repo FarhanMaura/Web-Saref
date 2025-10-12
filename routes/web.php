@@ -209,3 +209,12 @@ Route::get('/test-db', function () {
         return '❌ Connection failed: ' . $e->getMessage();
     }
 });
+
+Route::get('/ping-db', function () {
+    try {
+        DB::connection()->getPdo();
+        return '✅ Database connected successfully.';
+    } catch (\Exception $e) {
+        return '❌ Connection failed: ' . $e->getMessage();
+    }
+});
