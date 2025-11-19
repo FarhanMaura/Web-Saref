@@ -3,6 +3,7 @@
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\Admin\ReviewReplyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -87,6 +88,9 @@ Route::middleware(['auth'])->group(function () {
         return app(ReviewController::class)->store(request());
     })->name('reviews.store');
 
+    // Get package reviews API
+    Route::get('/packages/{package}/reviews', [ReviewController::class, 'getPackageReviews'])->name('packages.reviews');
+
     // ==================== ADMIN ROUTES ==================== //
     Route::prefix('admin')->group(function () {
 
@@ -166,6 +170,18 @@ Route::middleware(['auth'])->group(function () {
              ->name('admin.reviews.hide');
         Route::patch('/reviews/{review}/show', [\App\Http\Controllers\Admin\ReviewController::class, 'show'])
              ->name('admin.reviews.show');
+
+        // Review Reply Management oleh admin
+        Route::post('/review-replies', [ReviewReplyController::class, 'store'])
+             ->name('admin.review-replies.store');
+        Route::patch('/review-replies/{reviewReply}', [ReviewReplyController::class, 'update'])
+             ->name('admin.review-replies.update');
+        Route::delete('/review-replies/{reviewReply}', [ReviewReplyController::class, 'destroy'])
+             ->name('admin.review-replies.destroy');
+        Route::patch('/review-replies/{reviewReply}/hide', [ReviewReplyController::class, 'hide'])
+             ->name('admin.review-replies.hide');
+        Route::patch('/review-replies/{reviewReply}/show', [ReviewReplyController::class, 'show'])
+             ->name('admin.review-replies.show');
 
         // Order Management oleh admin
         Route::patch('/orders/{order}/update-payment', [\App\Http\Controllers\Admin\OrderController::class, 'updatePaymentStatus'])

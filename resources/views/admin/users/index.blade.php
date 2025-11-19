@@ -47,7 +47,7 @@
                                             User
                                         </th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            Email
+                                            Kontak
                                         </th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                             Role
@@ -90,19 +90,22 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-900">{{ $user->email }}</div>
+                                                <div class="text-sm text-blue-600 font-medium mt-1">
+                                                    📱 {{ $user->getFormattedPhone() }}
+                                                </div>
                                                 @if($user->email_verified_at)
                                                     <div class="text-xs text-green-600 flex items-center mt-1">
                                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                         </svg>
-                                                        Verified
+                                                        Email Verified
                                                     </div>
                                                 @else
                                                     <div class="text-xs text-yellow-600 flex items-center mt-1">
                                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                         </svg>
-                                                        Unverified
+                                                        Email Unverified
                                                     </div>
                                                 @endif
                                             </td>
@@ -242,6 +245,9 @@
                         </div>
                         <div class="mt-4 text-sm text-blue-700 bg-blue-100 p-3 rounded-lg">
                             <strong>Note:</strong> Admin biasa dapat promote user menjadi Admin, tetapi hanya Main Admin yang dapat promote menjadi Main Admin.
+                        </div>
+                        <div class="mt-3 text-sm text-green-700 bg-green-100 p-3 rounded-lg">
+                            <strong>Info Kontak:</strong> Nomor telepon user sekarang ditampilkan untuk memudahkan komunikasi jika ada kendala.
                         </div>
                     </div>
                 </div>

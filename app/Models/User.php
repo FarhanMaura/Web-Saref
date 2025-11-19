@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Order;
 use App\Models\Review;
+use App\Models\ReviewReply;
 
 class User extends Authenticatable
 {
@@ -26,6 +27,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'role'
     ];
@@ -67,6 +69,14 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the review replies for the user.
+     */
+    public function reviewReplies()
+    {
+        return $this->hasMany(ReviewReply::class);
     }
 
     /**
@@ -115,5 +125,25 @@ class User extends Authenticatable
             self::ROLE_ADMIN => 'Admin',
             default => 'User'
         };
+    }
+
+    /**
+     * Get user's phone number formatted
+     */
+    public function getFormattedPhone()
+    {
+        if (!$this->phone) {
+            return 'Belum diisi';
+        }
+
+        // Format phone number if it starts with 62 or 0
+        $phone = $this->phone;
+        if (str_starts_with($phone, '62')) {
+            $phone = '+' . $phone;
+        } elseif (str_starts_with($phone, '0')) {
+            $phone = '+62' . substr($phone, 1);
+        }
+
+        return $phone;
     }
 }

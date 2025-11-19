@@ -300,12 +300,16 @@
                                         @auth
                                             @if(Auth::user()->isAdmin())
                                                 <div class="flex space-x-2">
+                                                    <button onclick="showReplyForm({{ $review->id }})"
+                                                            class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 shadow hover:shadow-md">
+                                                        💬 Balas
+                                                    </button>
                                                     <form action="{{ route('admin.reviews.hide', $review) }}" method="POST">
                                                         @csrf
                                                         @method('PATCH')
                                                         <button type="submit"
-                                                                class="text-red-600 hover:text-red-800 text-sm bg-red-100 hover:bg-red-200 py-2 px-3 rounded-lg transition duration-200">
-                                                            Sembunyikan
+                                                                class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 shadow hover:shadow-md">
+                                                            🙈 Sembunyikan
                                                         </button>
                                                     </form>
                                                     <span class="text-xs px-3 py-2 rounded-full bg-green-100 text-green-700 font-medium">
@@ -317,6 +321,112 @@
                                     </div>
                                     <p class="text-gray-700 leading-relaxed mb-3">{{ $review->comment }}</p>
                                     <span class="text-sm text-gray-500">{{ $review->created_at->format('d M Y H:i') }}</span>
+
+                                    <!-- Reply Form for Admin -->
+                                    @auth
+                                        @if(Auth::user()->isAdmin())
+                                            <div id="replyForm-{{ $review->id }}" class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200 hidden">
+                                                <h5 class="font-semibold text-blue-800 mb-3">💌 Balas Komentar:</h5>
+                                                <form action="{{ route('admin.review-replies.store') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="review_id" value="{{ $review->id }}">
+                                                    <div class="mb-3">
+                                                        <textarea name="reply_message"
+                                                                  rows="3"
+                                                                  class="w-full border-blue-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3"
+                                                                  placeholder="Tulis balasan Anda untuk komentar ini..."
+                                                                  required></textarea>
+                                                    </div>
+                                                    <div class="flex justify-end space-x-2">
+                                                        <button type="button"
+                                                                onclick="hideReplyForm({{ $review->id }})"
+                                                                class="border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-4 rounded-lg transition duration-200">
+                                                            Batal
+                                                        </button>
+                                                        <button type="submit"
+                                                                class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 shadow hover:shadow-md">
+                                                            Kirim Balasan
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        @endif
+                                    @endauth
+
+                                    <!-- Display Replies -->
+                                    @if($review->visibleReplies->count() > 0)
+                                        <div class="mt-4 ml-8 space-y-4">
+                                            @foreach($review->visibleReplies as $reply)
+                                                <div class="bg-white p-4 rounded-xl border-l-4 border-blue-500 shadow-sm">
+                                                    <div class="flex justify-between items-start">
+                                                        <div class="flex items-center space-x-2">
+                                                            <span class="font-semibold text-blue-600">{{ $reply->user->name }}</span>
+                                                            @if($reply->user->isAdmin())
+                                                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Admin</span>
+                                                            @endif
+                                                            <span class="text-xs text-gray-500">{{ $reply->created_at->format('d M Y H:i') }}</span>
+                                                        </div>
+
+                                                        <!-- Admin Reply Controls -->
+                                                        @auth
+                                                            @if(Auth::user()->isAdmin())
+                                                                <div class="flex space-x-1">
+                                                                    <button onclick="editReply({{ $reply->id }}, '{{ addslashes($reply->reply_message) }}')"
+                                                                            class="text-yellow-600 hover:text-yellow-800 text-xs bg-yellow-100 hover:bg-yellow-200 py-1 px-2 rounded transition duration-200">
+                                                                        ✏️ Edit
+                                                                    </button>
+                                                                    <form action="{{ route('admin.review-replies.hide', $reply) }}" method="POST" class="inline">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <button type="submit"
+                                                                                class="text-red-600 hover:text-red-800 text-xs bg-red-100 hover:bg-red-200 py-1 px-2 rounded transition duration-200">
+                                                                            🙈 Hide
+                                                                        </button>
+                                                                    </form>
+                                                                    <form action="{{ route('admin.review-replies.destroy', $reply) }}" method="POST" class="inline" onsubmit="return confirm('Hapus balasan ini?')">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit"
+                                                                                class="text-red-600 hover:text-red-800 text-xs bg-red-100 hover:bg-red-200 py-1 px-2 rounded transition duration-200">
+                                                                            🗑️ Hapus
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            @endif
+                                                        @endauth
+                                                    </div>
+                                                    <p class="text-gray-700 mt-2" id="reply-text-{{ $reply->id }}">{{ $reply->reply_message }}</p>
+
+                                                    <!-- Edit Reply Form (Hidden by Default) -->
+                                                    @auth
+                                                        @if(Auth::user()->isAdmin())
+                                                            <div id="edit-reply-form-{{ $reply->id }}" class="mt-3 hidden">
+                                                                <form action="{{ route('admin.review-replies.update', $reply) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('PATCH')
+                                                                    <textarea name="reply_message"
+                                                                              rows="2"
+                                                                              class="w-full border-yellow-300 rounded-lg shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2"
+                                                                              required>{{ $reply->reply_message }}</textarea>
+                                                                    <div class="flex justify-end space-x-2 mt-2">
+                                                                        <button type="button"
+                                                                                onclick="cancelEdit({{ $reply->id }}, '{{ addslashes($reply->reply_message) }}')"
+                                                                                class="border border-gray-300 hover:border-gray-400 text-gray-700 text-xs py-1 px-2 rounded transition duration-200">
+                                                                            Batal
+                                                                        </button>
+                                                                        <button type="submit"
+                                                                                class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs py-1 px-2 rounded transition duration-200">
+                                                                            Update
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    @endauth
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
@@ -355,12 +465,16 @@
                                                 </div>
 
                                                 <div class="flex space-x-2">
+                                                    <button onclick="showReplyForm({{ $review->id }})"
+                                                            class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 shadow hover:shadow-md">
+                                                        💬 Balas
+                                                    </button>
                                                     <form action="{{ route('admin.reviews.show', $review) }}" method="POST">
                                                         @csrf
                                                         @method('PATCH')
                                                         <button type="submit"
-                                                                class="text-green-600 hover:text-green-800 text-sm bg-green-100 hover:bg-green-200 py-2 px-3 rounded-lg transition duration-200">
-                                                            Tampilkan
+                                                                class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 shadow hover:shadow-md">
+                                                            👁️ Tampilkan
                                                         </button>
                                                     </form>
                                                     <span class="text-xs px-3 py-2 rounded-full bg-red-100 text-red-700 font-medium">
@@ -370,6 +484,63 @@
                                             </div>
                                             <p class="text-gray-700 leading-relaxed mb-3">{{ $review->comment }}</p>
                                             <span class="text-sm text-gray-500">{{ $review->created_at->format('d M Y H:i') }}</span>
+
+                                            <!-- Display Hidden Replies -->
+                                            @if($review->replies->count() > 0)
+                                                <div class="mt-4 ml-8 space-y-4">
+                                                    @foreach($review->replies as $reply)
+                                                        <div class="bg-gray-100 p-4 rounded-xl border-l-4 border-gray-400 opacity-75">
+                                                            <div class="flex justify-between items-start">
+                                                                <div class="flex items-center space-x-2">
+                                                                    <span class="font-semibold text-gray-600">{{ $reply->user->name }}</span>
+                                                                    @if($reply->user->isAdmin())
+                                                                        <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full font-medium">Admin</span>
+                                                                    @endif
+                                                                    <span class="text-xs text-gray-500">{{ $reply->created_at->format('d M Y H:i') }}</span>
+                                                                    @if(!$reply->is_visible)
+                                                                        <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">Hidden</span>
+                                                                    @endif
+                                                                </div>
+
+                                                                @auth
+                                                                    @if(Auth::user()->isAdmin())
+                                                                        <div class="flex space-x-1">
+                                                                            @if(!$reply->is_visible)
+                                                                                <form action="{{ route('admin.review-replies.show', $reply) }}" method="POST" class="inline">
+                                                                                    @csrf
+                                                                                    @method('PATCH')
+                                                                                    <button type="submit"
+                                                                                            class="text-green-600 hover:text-green-800 text-xs bg-green-100 hover:bg-green-200 py-1 px-2 rounded transition duration-200">
+                                                                                        👁️ Show
+                                                                                    </button>
+                                                                                </form>
+                                                                            @else
+                                                                                <form action="{{ route('admin.review-replies.hide', $reply) }}" method="POST" class="inline">
+                                                                                    @csrf
+                                                                                    @method('PATCH')
+                                                                                    <button type="submit"
+                                                                                            class="text-red-600 hover:text-red-800 text-xs bg-red-100 hover:bg-red-200 py-1 px-2 rounded transition duration-200">
+                                                                                        🙈 Hide
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif
+                                                                            <form action="{{ route('admin.review-replies.destroy', $reply) }}" method="POST" class="inline" onsubmit="return confirm('Hapus balasan ini?')">
+                                                                                @csrf
+                                                                                @method('DELETE')
+                                                                                <button type="submit"
+                                                                                        class="text-red-600 hover:text-red-800 text-xs bg-red-100 hover:bg-red-200 py-1 px-2 rounded transition duration-200">
+                                                                                    🗑️ Hapus
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    @endif
+                                                                @endauth
+                                                            </div>
+                                                            <p class="text-gray-600 mt-2">{{ $reply->reply_message }}</p>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
@@ -405,6 +576,33 @@
             }
             // Update hidden input
             document.getElementById('ratingInput').value = rating;
+        }
+
+        // Reply Functions
+        function showReplyForm(reviewId) {
+            document.getElementById('replyForm-' + reviewId).classList.remove('hidden');
+            document.getElementById('replyForm-' + reviewId).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function hideReplyForm(reviewId) {
+            document.getElementById('replyForm-' + reviewId).classList.add('hidden');
+        }
+
+        function editReply(replyId, originalMessage) {
+            // Hide the reply text
+            document.getElementById('reply-text-' + replyId).classList.add('hidden');
+            // Show the edit form
+            document.getElementById('edit-reply-form-' + replyId).classList.remove('hidden');
+        }
+
+        function cancelEdit(replyId, originalMessage) {
+            // Show the reply text
+            document.getElementById('reply-text-' + replyId).classList.remove('hidden');
+            // Hide the edit form
+            document.getElementById('edit-reply-form-' + replyId).classList.add('hidden');
+            // Reset the textarea value
+            const textarea = document.querySelector('#edit-reply-form-' + replyId + ' textarea');
+            textarea.value = originalMessage;
         }
     </script>
 </x-app-layout>

@@ -45,4 +45,18 @@ class ReviewController extends Controller
 
         return back()->with('success', 'Ulasan berhasil dikirim!');
     }
+
+    /**
+     * Get reviews for a package with their replies
+     */
+    public function getPackageReviews($packageId)
+    {
+        $reviews = Review::with(['user', 'visibleReplies.user'])
+                        ->where('package_id', $packageId)
+                        ->where('is_visible', true)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        return response()->json($reviews);
+    }
 }

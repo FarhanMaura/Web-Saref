@@ -26,4 +26,36 @@ class Review extends Model
     {
         return $this->belongsTo(Package::class);
     }
+
+    /**
+     * Get the replies for the review.
+     */
+    public function replies()
+    {
+        return $this->hasMany(ReviewReply::class);
+    }
+
+    /**
+     * Get the visible replies for the review.
+     */
+    public function visibleReplies()
+    {
+        return $this->hasMany(ReviewReply::class)->visible();
+    }
+
+    /**
+     * Check if review has any replies.
+     */
+    public function hasReplies()
+    {
+        return $this->replies()->count() > 0;
+    }
+
+    /**
+     * Get the latest reply for the review.
+     */
+    public function latestReply()
+    {
+        return $this->hasOne(ReviewReply::class)->latest();
+    }
 }

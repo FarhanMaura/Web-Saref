@@ -10,6 +10,51 @@
     <style>
         .font-playfair { font-family: 'Playfair Display', serif; }
         .font-inter { font-family: 'Inter', sans-serif; }
+
+        /* Slider Styles */
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .slide.active {
+            opacity: 1;
+            position: relative;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .slider-dot.active {
+            background-color: #ec4899;
+        }
     </style>
 </head>
 <body class="font-inter bg-gradient-to-br from-pink-50 to-white">
@@ -61,10 +106,53 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <div class="bg-pink-100 rounded-2xl p-8 transform rotate-3">
-                        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                             alt="Wedding Couple"
-                             class="rounded-2xl shadow-2xl transform -rotate-3">
+                    <div class="bg-pink-100 rounded-2xl p-8 transform rotate-3 slider-container">
+                        <div class="slider">
+                            <!-- Slide 1 -->
+                            <div class="slide active rounded-2xl shadow-2xl transform -rotate-3">
+                                <img src="{{ asset('images/image1.jpg') }}"
+                                    alt="Wedding Couple"
+                                    class="rounded-2xl w-full h-full object-cover">
+                            </div>
+                            <!-- Slide 2 -->
+                            <div class="slide rounded-2xl shadow-2xl transform -rotate-3">
+                                <img src="{{ asset('images/image2.jpg') }}"
+                                    alt="Wedding Rings"
+                                    class="rounded-2xl w-full h-full object-cover">
+                            </div>
+                            <!-- Slide 3 -->
+                            <div class="slide rounded-2xl shadow-2xl transform -rotate-3">
+                                <img src="{{ asset('images/image3.jpg') }}"
+                                    alt="Wedding Ceremony"
+                                    class="rounded-2xl w-full h-full object-cover">
+                            </div>
+                            <!-- Slide 4 -->
+                            <div class="slide rounded-2xl shadow-2xl transform -rotate-3">
+                                <img src="{{ asset('images/image4.jpg') }}"
+                                    alt="Bride and Groom"
+                                    class="rounded-2xl w-full h-full object-cover">
+                            </div>
+                            <!-- Slide 5 -->
+                            <div class="slide rounded-2xl shadow-2xl transform -rotate-3">
+                                <img src="{{ asset('images/image5.jpg') }}"
+                                    alt="Wedding Moment"
+                                    class="rounded-2xl w-full h-full object-cover">
+                            </div>
+                            <!-- Slide 6 -->
+                            <div class="slide rounded-2xl shadow-2xl transform -rotate-3">
+                                <img src="{{ asset('images/image6.jpg') }}"
+                                    alt="Wedding Celebration"
+                                    class="rounded-2xl w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div class="slider-dots">
+                            <span class="slider-dot active" data-slide="0"></span>
+                            <span class="slider-dot" data-slide="1"></span>
+                            <span class="slider-dot" data-slide="2"></span>
+                            <span class="slider-dot" data-slide="3"></span>
+                            <span class="slider-dot" data-slide="4"></span>
+                            <span class="slider-dot" data-slide="5"></span>
+                        </div>
                     </div>
                     <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-xl">
                         <div class="flex items-center space-x-4">
@@ -350,6 +438,49 @@
     </div>
 
     <script>
+        // Slider functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        const slideCount = slides.length;
+
+        function showSlide(n) {
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Remove active class from all dots
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+            });
+
+            // Set current slide
+            currentSlide = (n + slideCount) % slideCount;
+
+            // Show current slide
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        // Auto slide every 5 seconds
+        setInterval(nextSlide, 5000);
+
+        // Add click event to dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+            });
+        });
+
+        // Initialize slider
+        showSlide(0);
+
+        // Existing functions
         function showPackageAlert() {
             document.getElementById('packageAlert').classList.remove('hidden');
         }

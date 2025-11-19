@@ -62,6 +62,15 @@
                     </div>
 
                     <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700">Nomor Telepon</label>
+                        <input id="phone" name="phone" type="tel"
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
+                               placeholder="Contoh: +6281234567890 atau 081234567890"
+                               value="{{ old('phone') }}">
+                        <p class="mt-1 text-xs text-gray-500">Nomor telepon digunakan untuk komunikasi penting terkait pesanan Anda</p>
+                    </div>
+
+                    <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                         <input id="password" name="password" type="password" required
                                class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
