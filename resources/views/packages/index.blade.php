@@ -184,12 +184,16 @@
                         Ceritakan konsep impian Anda, kami akan wujudkan dalam paket photography yang sempurna!
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button class="bg-white text-pink-600 hover:bg-pink-50 font-bold py-4 px-8 rounded-xl transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                            💬 Konsultasi Gratis
-                        </button>
-                        <button class="border-2 border-white text-white hover:bg-white hover:bg-opacity-10 font-bold py-4 px-8 rounded-xl transition duration-300 transform hover:-translate-y-1">
+                        <a href="https://wa.me/62895800561354" target="_blank">
+                            <button class="bg-white text-pink-600 hover:bg-pink-50 font-bold py-4 px-8 rounded-xl transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                💬 Konsultasi Gratis
+                            </button>
+                        </a>
+                        <a href="https://www.instagram.com/rj.visualstories?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="text-gray-400 hover:text-white" target="_blank">
+                            <button class="border-2 border-white text-white hover:bg-white hover:bg-opacity-10 font-bold py-4 px-8 rounded-xl transition duration-300 transform hover:-translate-y-1">
                             🎨 Lihat Portfolio
                         </button>
+                        </a>
                     </div>
                 </div>
             </div>

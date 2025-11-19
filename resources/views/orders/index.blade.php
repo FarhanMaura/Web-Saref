@@ -145,7 +145,7 @@
                                                             "📍 *Lokasi:* " . $order->event_location . "%0A%0A" .
                                                             "Mohon info cara pembayaran dan diskusi lebih lanjut. Terima kasih! 🙏";
                                                         @endphp
-                                                        <a href="https://wa.me/6289616378823?text={{ $whatsappMessage }}"
+                                                        <a href="https://wa.me/62895800561354?text={{ $whatsappMessage }}"
                                                            target="_blank"
                                                            class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 px-4 rounded-xl transition duration-300 shadow-lg hover:shadow-xl text-sm">
                                                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -320,7 +320,7 @@
             <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl">
                 <h4 class="font-semibold text-gray-900 mb-2">Butuh Bantuan?</h4>
                 <p class="text-sm text-gray-600 mb-3">Hubungi kami melalui WhatsApp untuk pertanyaan tentang pesanan Anda.</p>
-                <a href="https://wa.me/6289616378823"
+                <a href="https://wa.me/62895800561354"
                 target="_blank"
                 class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 px-4 rounded-xl transition duration-300 text-sm">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">

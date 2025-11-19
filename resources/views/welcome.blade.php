@@ -396,7 +396,7 @@
                 <div>
                     <h4 class="font-semibold mb-4">Kontak</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li>Phone: +62 812-3456-7890</li>
+                        <li>Phone: +62 895-8005-61354</li>
                         <li>Alamat: KayuAgung, Palembang</li>
                     </ul>
                 </div>
