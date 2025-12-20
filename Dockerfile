@@ -1,8 +1,6 @@
 FROM php:8.2-fpm
 
-# =========================
 # Install system packages
-# =========================
 RUN apt-get update && apt-get install -y \
     nginx \
     git \
@@ -17,66 +15,38 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# =========================
 # Install Composer
-# =========================
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# =========================
 # Set working directory
-# =========================
 WORKDIR /var/www/html
 
-# =========================
 # Copy project files
-# =========================
 COPY . .
 
-# =========================
-# Install Laravel dependencies
-# =========================
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# =========================
-# SQLite database setup
-# =========================
+# SQLite database
 RUN mkdir -p database \
     && touch database/database.sqlite \
     && chown -R www-data:www-data database \
     && chmod 664 database/database.sqlite
 
-# =========================
 # Laravel permissions
-# =========================
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# =========================
 # Nginx config
-# =========================
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# =========================
-# Environment
-# =========================
+# Env default
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV DB_CONNECTION=sqlite
 ENV DB_DATABASE=/var/www/html/database/database.sqlite
 ENV SESSION_DRIVER=database
 
-# =========================
-# Run migrations (force)
-# =========================
-RUN php artisan key:generate --force \
-    && php artisan migrate --force
-
-# =========================
-# Expose port (Railway)
-# =========================
 EXPOSE 8080
 
-# =========================
-# Start PHP-FPM + Nginx
-# =========================
 CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
