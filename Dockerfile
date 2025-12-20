@@ -1,12 +1,13 @@
 FROM php:8.2-fpm
 
-# Install system deps + nginx
+# Install system deps + nginx + envsubst
 RUN apt-get update && apt-get install -y \
     nginx \
     git \
     unzip \
     libzip-dev \
     libsqlite3-dev \
+    gettext \
     && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip \
     && apt-get clean
 
@@ -22,18 +23,18 @@ COPY . .
 # Install Laravel deps
 RUN composer install --no-dev --optimize-autoloader
 
-# Permission
+# Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-# Nginx config
+# Copy nginx template
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 # Laravel env
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
-# Start services
+# Start PHP-FPM + Nginx
 CMD sh -c "envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf \
     && php-fpm -D \
     && nginx -g 'daemon off;'"
