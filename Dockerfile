@@ -6,7 +6,7 @@ ARG CACHEBUST=1
 
 # Install dependencies dan Nginx
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev zip nginx gettext-base sqlite3 \
+    git unzip libpq-dev libzip-dev zip nginx gettext-base sqlite3 libsqlite3-dev \
     && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip
 
 # Copy file project ke container
