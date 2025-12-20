@@ -1,45 +1,82 @@
 FROM php:8.2-fpm
 
-# Install system deps + nginx + envsubst
+# =========================
+# Install system packages
+# =========================
 RUN apt-get update && apt-get install -y \
     nginx \
     git \
     unzip \
     libzip-dev \
     libsqlite3-dev \
-    gettext \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip \
-    && apt-get clean
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        pdo_sqlite \
+        zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install composer
+# =========================
+# Install Composer
+# =========================
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set workdir
+# =========================
+# Set working directory
+# =========================
 WORKDIR /var/www/html
 
-# Copy project
+# =========================
+# Copy project files
+# =========================
 COPY . .
 
-# Install Laravel deps
+# =========================
+# Install Laravel dependencies
+# =========================
 RUN composer install --no-dev --optimize-autoloader
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html \
+# =========================
+# SQLite database setup
+# =========================
+RUN mkdir -p database \
+    && touch database/database.sqlite \
+    && chown -R www-data:www-data database \
+    && chmod 664 database/database.sqlite
+
+# =========================
+# Laravel permissions
+# =========================
+RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Copy nginx template
-COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+# =========================
+# Nginx config
+# =========================
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Laravel env
+# =========================
+# Environment
+# =========================
 ENV APP_ENV=production
 ENV APP_DEBUG=false
+ENV DB_CONNECTION=sqlite
+ENV DB_DATABASE=/var/www/html/database/database.sqlite
+ENV SESSION_DRIVER=database
 
+# =========================
+# Run migrations (force)
+# =========================
+RUN php artisan key:generate --force \
+    && php artisan migrate --force
+
+# =========================
+# Expose port (Railway)
+# =========================
+EXPOSE 8080
+
+# =========================
 # Start PHP-FPM + Nginx
-CMD sh -c "\
-    export PORT=\${PORT:-8080} && \
-    echo \"Using PORT=\$PORT\" && \
-    envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && \
-    nginx -t && \
-    php-fpm -D && \
-    nginx -g 'daemon off;'"
-
+# =========================
+CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
