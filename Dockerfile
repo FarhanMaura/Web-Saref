@@ -3,8 +3,8 @@ FROM php:8.2-fpm
 
 # Install dependencies dan Nginx
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev zip nginx gettext-base \
-    && docker-php-ext-install pdo pdo_mysql zip
+    git unzip libpq-dev libzip-dev zip nginx gettext-base sqlite3 \
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip
 
 # Copy file project ke container
 COPY . /var/www/html
@@ -16,14 +16,18 @@ WORKDIR /var/www/html
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Create database directory and set permissions
+RUN mkdir -p /var/www/html/database && \
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/sites-available/default
 
-# Expose port 80
-EXPOSE 80
+# Set default PORT environment variable
+ENV PORT=8080
+
+# Expose port
+EXPOSE ${PORT}
 
 # Start script
 COPY start.sh /start.sh
