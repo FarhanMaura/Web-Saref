@@ -33,5 +33,5 @@ RUN mkdir -p storage/framework/{sessions,views,cache} \
 # Expose port
 EXPOSE 8080
 
-# Start PHP built-in server
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Start PHP built-in server with debug output
+CMD sh -c 'echo "PORT environment variable: $PORT" && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}'
