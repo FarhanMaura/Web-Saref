@@ -35,6 +35,11 @@ ENV APP_ENV=production
 ENV APP_DEBUG=false
 
 # Start PHP-FPM + Nginx
-CMD sh -c "envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf \
-    && php-fpm -D \
-    && nginx -g 'daemon off;'"
+CMD sh -c "\
+    export PORT=\${PORT:-8080} && \
+    echo \"Using PORT=\$PORT\" && \
+    envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && \
+    nginx -t && \
+    php-fpm -D && \
+    nginx -g 'daemon off;'"
+
