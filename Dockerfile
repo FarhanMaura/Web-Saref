@@ -1,8 +1,8 @@
-# Use PHP CLI image (no web server included)
-FROM php:8.2-cli
+FROM php:8.2-fpm
 
-# Install dependencies
+# Install system deps + nginx
 RUN apt-get update && apt-get install -y \
+    nginx \
     git \
     unzip \
     libzip-dev \
@@ -10,28 +10,28 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip \
     && apt-get clean
 
-# Set working directory
-WORKDIR /var/www/html
-
-# Copy application files
-COPY . /var/www/html
-
-# Install Composer
+# Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Set workdir
+WORKDIR /var/www/html
 
-# Create required directories and set permissions
-RUN mkdir -p storage/framework/{sessions,views,cache} \
-    && mkdir -p storage/logs \
-    && mkdir -p bootstrap/cache \
-    && mkdir -p database \
-    && touch database/database.sqlite \
-    && chmod -R 777 storage bootstrap/cache database
+# Copy project
+COPY . .
 
-# Expose port
-EXPOSE 8080
+# Install Laravel deps
+RUN composer install --no-dev --optimize-autoloader
 
-# Start PHP built-in server with debug output
-CMD sh -c 'echo "PORT environment variable: $PORT" && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}'
+# Permission
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
+
+# Nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Laravel env
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+
+# Start services
+CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
