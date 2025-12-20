@@ -1,39 +1,44 @@
-# Gunakan PHP 8.2 FPM
-FROM php:8.2-fpm
+# Use official PHP Apache image
+FROM php:8.2-apache
 
-# Force rebuild - updated 2025-12-20
-ARG CACHEBUST=1
-
-# Install dependencies dan Nginx
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev zip nginx gettext-base sqlite3 libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip
-
-# Copy file project ke container
-COPY . /var/www/html
+    git \
+    unzip \
+    libzip-dev \
+    libsqlite3-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip \
+    && a2enmod rewrite
 
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy application files
+COPY . /var/www/html
+
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
 
-# Create database directory and set permissions
-RUN mkdir -p /var/www/html/database && \
-    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Copy Nginx configuration
-COPY nginx.conf /etc/nginx/sites-available/default
+# Set Apache document root
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Set default PORT environment variable
-ENV PORT=8080
+# Create required directories and set permissions
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+    && mkdir -p storage/logs \
+    && mkdir -p bootstrap/cache \
+    && mkdir -p database \
+    && touch database/database.sqlite \
+    && chown -R www-data:www-data storage bootstrap/cache database \
+    && chmod -R 775 storage bootstrap/cache database
 
-# Expose port
-EXPOSE ${PORT}
+# Copy and set start script
+COPY start-apache.sh /usr/local/bin/start-apache.sh
+RUN chmod +x /usr/local/bin/start-apache.sh
 
-# Start script
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-CMD ["/start.sh"]
+# Start Apache with PORT handling
+CMD ["/usr/local/bin/start-apache.sh"]
