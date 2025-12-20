@@ -27,11 +27,13 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
 # Nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 # Laravel env
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
 # Start services
-CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
+CMD sh -c "envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf \
+    && php-fpm -D \
+    && nginx -g 'daemon off;'"
