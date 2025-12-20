@@ -3,7 +3,7 @@ FROM php:8.2-fpm
 
 # Install dependencies dan Nginx
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev zip nginx \
+    git unzip libpq-dev libzip-dev zip nginx gettext-base \
     && docker-php-ext-install pdo pdo_mysql zip
 
 # Copy file project ke container
