@@ -6,6 +6,10 @@ RUN apt-get update && apt-get install -y \
     git unzip libpq-dev libzip-dev zip \
     && docker-php-ext-install pdo pdo_mysql zip
 
+# Nonaktifkan MPM yang konflik dan aktifkan mpm_prefork
+RUN a2dismod mpm_event mpm_worker || true
+RUN a2enmod mpm_prefork
+
 # Aktifkan mod_rewrite untuk Laravel
 RUN a2enmod rewrite
 
