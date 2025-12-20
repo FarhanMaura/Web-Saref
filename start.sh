@@ -14,11 +14,11 @@ if [ ! -f /var/www/html/database/database.sqlite ]; then
     chmod 664 /var/www/html/database/database.sqlite
 fi
 
-# Run Laravel optimizations
-echo "Running Laravel optimizations..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+# Run Laravel optimizations (temporarily disabled for debugging)
+echo "Skipping Laravel optimizations for debugging..."
+# php artisan config:cache
+# php artisan route:cache
+# php artisan view:cache
 
 # Replace PORT placeholder in nginx config
 envsubst '${PORT}' < /etc/nginx/sites-available/default > /tmp/nginx.conf
