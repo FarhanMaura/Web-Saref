@@ -1,6 +1,9 @@
 # Gunakan PHP 8.2 FPM
 FROM php:8.2-fpm
 
+# Force rebuild - updated 2025-12-20
+ARG CACHEBUST=1
+
 # Install dependencies dan Nginx
 RUN apt-get update && apt-get install -y \
     git unzip libpq-dev libzip-dev zip nginx gettext-base sqlite3 \
