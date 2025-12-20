@@ -56,12 +56,7 @@ php-fpm -D
 # Wait a moment for PHP-FPM to fully start
 sleep 2
 
-# Check if PHP-FPM is running
-if ! pgrep -x php-fpm > /dev/null; then
-    echo "ERROR: PHP-FPM failed to start!"
-    exit 1
-fi
-echo "PHP-FPM started successfully"
+echo "PHP-FPM started"
 
 # Start Nginx in foreground
 echo "Starting Nginx..."
